@@ -1,17 +1,16 @@
 package org.matsim.run;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.application.MATSimApplication;
 import org.matsim.application.options.SampleOptions;
+import org.matsim.contrib.emissions.utils.EmissionsConfigGroup;
 import org.matsim.core.config.Config;
+import org.matsim.core.config.ConfigGroup;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.groups.StrategyConfigGroup;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.replanning.strategies.DefaultPlanStrategiesModule;
-import org.matsim.prepare.RunOpenBerlinCalibration;
 import org.matsim.simwrapper.SimWrapperConfigGroup;
 import org.matsim.simwrapper.SimWrapperModule;
 import picocli.CommandLine;
@@ -20,8 +19,6 @@ import java.util.List;
 
 @CommandLine.Command(header = ":: Open Berlin Scenario ::", version = RunOpenBerlinScenario.VERSION, mixinStandardHelpOptions = true)
 public class RunOpenBerlinScenario extends MATSimApplication {
-
-	private static final Logger log = LogManager.getLogger(RunOpenBerlinCalibration.class);
 
 	public static final String VERSION = "6.0";
 	public static final String CRS = "EPSG:25832";
@@ -34,6 +31,16 @@ public class RunOpenBerlinScenario extends MATSimApplication {
 
 	public static void main(String[] args) {
 		MATSimApplication.run(RunOpenBerlinScenario.class, args);
+	}
+
+	@Override
+	protected List<ConfigGroup> getCustomModules() {
+		return List.of(
+			new SimWrapperConfigGroup(),
+			// config group is in config file and must be added. Emission contrib is NOT run during regular
+			// matsim run
+			new EmissionsConfigGroup()
+		);
 	}
 
 	@Override
