@@ -14,6 +14,8 @@ import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.network.Network;
+import org.matsim.contrib.emissions.HbefaVehicleCategory;
+import org.matsim.contrib.emissions.OsmHbefaMapping;
 import org.matsim.contrib.gtfs.RunGTFS2MATSim;
 import org.matsim.contrib.osm.networkReader.LinkProperties;
 import org.matsim.contrib.osm.networkReader.SupersonicOsmNetworkReader;
@@ -109,6 +111,7 @@ public class PrepareAgentEmissionNetwork {
 
 		useOriginalGeometryWithinGeometry(network, loadStudyArea(Paths.get(bboxShapeFile)));
 		network.getAttributes().putAttribute("coordinateReferenceSystem", "EPSG:25833");
+		OsmHbefaMapping.build().addHbefaMappings(network);
 		return network;
 	}
 
@@ -390,6 +393,15 @@ public class PrepareAgentEmissionNetwork {
 					}
 				}
 			}
+		}
+
+		for (var type : scenario.getTransitVehicles().getVehicleTypes().values()) {
+			var engineInformation = type.getEngineInformation();
+			// ignore in emission calculations, as we don't have transit vehicles on the network
+			VehicleUtils.setHbefaVehicleCategory(engineInformation, HbefaVehicleCategory.NON_HBEFA_VEHICLE.toString());
+			VehicleUtils.setHbefaTechnology(engineInformation, "average");
+			VehicleUtils.setHbefaSizeClass(engineInformation, "average");
+			VehicleUtils.setHbefaEmissionsConcept(engineInformation, "average");
 		}
 	}
 
