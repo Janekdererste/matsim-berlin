@@ -40,7 +40,8 @@ public class CreateVehicleTypes implements MATSimAppCommand {
 		type.setLength(15);
 		type.setWidth(1.0);
 		type.setFlowEfficiencyFactor(1.0);
-		type.setMaximumVelocity(36.1); // 130km/h
+		// 100km/h
+		type.setMaximumVelocity(27.7);
 		type.setNetworkMode(TransportMode.car);
 		type.setPcuEquivalents(3.5);
 		VehicleUtils.setHbefaVehicleCategory(type.getEngineInformation(), HbefaVehicleCategory.PASSENGER_CAR.toString());
@@ -63,7 +64,8 @@ public class CreateVehicleTypes implements MATSimAppCommand {
 		type.setLength(7.5);
 		type.setWidth(1.0);
 		type.setFlowEfficiencyFactor(1.0);
-		type.setMaximumVelocity(36.1); // 130km/h
+		// 130km/h
+		type.setMaximumVelocity(36.1);
 		type.setNetworkMode(TransportMode.car);
 		type.setPcuEquivalents(1.0);
 		VehicleUtils.setHbefaVehicleCategory(type.getEngineInformation(), HbefaVehicleCategory.HEAVY_GOODS_VEHICLE.toString());
