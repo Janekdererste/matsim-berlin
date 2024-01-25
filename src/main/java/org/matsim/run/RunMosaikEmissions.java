@@ -36,7 +36,6 @@ import org.matsim.core.utils.gis.ShapeFileReader;
 import org.matsim.vis.snapshotwriters.PositionEvent;
 import org.matsim.vis.snapshotwriters.SnapshotWritersModule;
 import org.opengis.feature.simple.SimpleFeature;
-import picocli.CommandLine;
 
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -46,7 +45,7 @@ import java.util.function.Predicate;
 
 public class RunMosaikEmissions extends RunOpenBerlinScenario {
 
-    @CommandLine.Option(names = "--filter", description = "Path to filter", required = false)
+    // @CommandLine.Option(names = "--filter", description = "Path to filter", required = true)
     private Path snapshotFilter;
 
     public static void main(String[] args) {
