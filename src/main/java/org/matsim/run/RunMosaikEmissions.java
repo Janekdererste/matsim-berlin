@@ -36,6 +36,7 @@ import org.matsim.core.utils.gis.ShapeFileReader;
 import org.matsim.vis.snapshotwriters.PositionEvent;
 import org.matsim.vis.snapshotwriters.SnapshotWritersModule;
 import org.opengis.feature.simple.SimpleFeature;
+import picocli.CommandLine;
 
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -45,11 +46,11 @@ import java.util.function.Predicate;
 
 public class RunMosaikEmissions extends RunOpenBerlinScenario {
 
-    // @CommandLine.Option(names = "--filter", description = "Path to filter", required = true)
+    @CommandLine.Option(names = "--filter", description = "Path to filter", required = true)
     private Path snapshotFilter;
 
     public static void main(String[] args) {
-        MATSimApplication.run(RunMosaikEmissions.class);
+        MATSimApplication.run(RunMosaikEmissions.class, args);
     }
 
     @Override
@@ -57,10 +58,13 @@ public class RunMosaikEmissions extends RunOpenBerlinScenario {
 
         config = super.prepareConfig(config);
 
+        config.global().setCoordinateSystem("EPSG:25833");
+
         // tell the default event writer to not write any events
         config.controler().setWriteEventsInterval(0);
         config.controler().setFirstIteration(0);
         config.controler().setLastIteration(0);
+        config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
 
         config.qsim().setSnapshotPeriod(1);
         config.qsim().setSnapshotStyle(QSimConfigGroup.SnapshotStyle.kinematicWaves);
@@ -85,6 +89,7 @@ public class RunMosaikEmissions extends RunOpenBerlinScenario {
 
         var bbox = loadStudyArea(this.snapshotFilter);
         scenario.getNetwork().getLinks().values().parallelStream()
+                .filter(l -> !l.getAllowedModes().contains(TransportMode.pt))
                 .filter(l -> isCoveredBy(l, bbox))
                 .forEach(l -> l.getAttributes().putAttribute(SnapshotWritersModule.GENERATE_SNAPSHOT_FOR_LINK_KEY, true));
     }

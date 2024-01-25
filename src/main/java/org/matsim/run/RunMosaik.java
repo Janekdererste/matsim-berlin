@@ -34,6 +34,7 @@ public class RunMosaik extends RunOpenBerlinScenario {
 		log.info("!!!!!!!!!!!");
 
 		config = super.prepareConfig(config);
+		config.global().setCoordinateSystem("EPSG:25833");
 		config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
 
 		// clear all strategies and only add reRoute for all subpopulations
