@@ -153,7 +153,7 @@ public class RunMosaikEmissions extends RunOpenBerlinScenario {
                     ), eventsFile);
 
             // write only position-emissions
-            var positionEmissionWriter = new FilterEventsWriter(e -> e.getEventType().equals(PositionEmissionsModule.PositionEmissionEvent.EVENT_TYPE), emissionEventsFile);
+            var positionEmissionWriter = new FilterEventsWriter(e -> e.getEventType().equals(PositionEmissionsModule.PositionEmissionEvent.EVENT_TYPE), positionEmissionEventsFile);
             var emissionWriter = new FilterEventsWriter(e -> e.getEventType().equals(WarmEmissionEvent.EVENT_TYPE) || e.getEventType().equals(ColdEmissionEvent.EVENT_TYPE), emissionEventsFile);
 
             eventsManager.addHandler(normalWriter);
