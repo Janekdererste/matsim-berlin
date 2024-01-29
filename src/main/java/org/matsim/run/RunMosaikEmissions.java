@@ -10,10 +10,12 @@ import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.events.Event;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.application.MATSimApplication;
+import org.matsim.contrib.emissions.EmissionModule;
 import org.matsim.contrib.emissions.EmissionUtils;
 import org.matsim.contrib.emissions.PositionEmissionsModule;
 import org.matsim.contrib.emissions.events.ColdEmissionEvent;
 import org.matsim.contrib.emissions.events.WarmEmissionEvent;
+import org.matsim.contrib.emissions.utils.EmissionsConfigGroup;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.groups.ControlerConfigGroup;
@@ -75,6 +77,10 @@ public class RunMosaikEmissions extends RunOpenBerlinScenario {
         config.parallelEventHandling().setSynchronizeOnSimSteps(true);
         config.qsim().setFilterSnapshots(QSimConfigGroup.FilterSnapshots.withLinkAttributes);
 
+        var emissionConfig = (EmissionsConfigGroup) config.getModules().get("emissions");
+        // this forces the emissions module to use the events manager which we install
+        emissionConfig.setWritingEmissionsEvents(true);
+
         return config;
     }
 
@@ -103,6 +109,7 @@ public class RunMosaikEmissions extends RunOpenBerlinScenario {
             public void install() {
                 addControlerListenerBinding().to(WriterSetUp.class);
                 bind(EventsManager.class).to(EventsManagerImpl.class).in(Singleton.class);
+                bind(EmissionModule.class);
             }
         });
     }
@@ -145,6 +152,7 @@ public class RunMosaikEmissions extends RunOpenBerlinScenario {
             var eventsFile = outputDirectoryHierarchy.getIterationFilename(event.getIteration(), "events.xml.gz");
             var positionEmissionEventsFile = outputDirectoryHierarchy.getIterationFilename(event.getIteration(), "position-emission-events.xml.gz");
             var emissionEventsFile = outputDirectoryHierarchy.getIterationFilename(event.getIteration(), "emission-events.xml.gz");
+            var allEvents = outputDirectoryHierarchy.getIterationFilename(event.getIteration(), "all_events.xml.gz");
 
             // write everything except: positions, position-emissions, warm-emissions, cold-emissions
             var normalWriter = new FilterEventsWriter(
@@ -159,13 +167,16 @@ public class RunMosaikEmissions extends RunOpenBerlinScenario {
             // write only position-emissions
             var positionEmissionWriter = new FilterEventsWriter(e -> e.getEventType().equals(PositionEmissionsModule.PositionEmissionEvent.EVENT_TYPE), positionEmissionEventsFile);
             var emissionWriter = new FilterEventsWriter(e -> e.getEventType().equals(WarmEmissionEvent.EVENT_TYPE) || e.getEventType().equals(ColdEmissionEvent.EVENT_TYPE), emissionEventsFile);
+            var allWriter = new EventWriterXML(allEvents);
 
             eventsManager.addHandler(normalWriter);
             eventsManager.addHandler(emissionWriter);
             eventsManager.addHandler(positionEmissionWriter);
+            eventsManager.addHandler(allWriter);
             writers.add(normalWriter);
             writers.add(emissionWriter);
             writers.add(positionEmissionWriter);
+            writers.add(allWriter);
         }
 
         @Override

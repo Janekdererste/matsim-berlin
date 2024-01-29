@@ -203,7 +203,7 @@
 		<!-- Skip detailed files as we currently only prepared average vehicle types -->
 		<param name="detailedWarmEmissionFactorsFile" value=""/>
 		<param name="detailedColdEmissionFactorsFile" value=""/>
-		<param name="isWritingEmissionsEvents" value="false"/>
+        <param name="isWritingEmissionsEvents" value="true"/>
 		<!-- use hülsmann kickhöfer approach for calulating emissions -->
 		<param name="emissionsComputationMethod" value="StopAndGoFraction"/>
 		<param name="detailedVsAverageLookupBehavior" value="directlyTryAverageTable"/>
